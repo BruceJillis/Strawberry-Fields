@@ -50,7 +50,7 @@ Note: the ordering of the problems corresponds to the ordering in the problems f
 
 Instructions
 ------------
-To run the program the ECLiPSe runtime is needed. It can be obtained (for free) from here. After installation, start the doseclipse tool (or equivalent command line executable) in the directory containing the rects.ecl and problems.ecl file and issue the command (note the '.' at the end):
+To run the program the ECLiPSe runtime is needed. It can be obtained (for free) from http://eclipseclp.org/download.html. After installation, start the doseclipse tool (or equivalent command line executable) in the directory containing the rects.ecl and problems.ecl file and issue the command (note the '.' at the end):
 	
 	compile(['problems.ecl', 'rects.ecl']).
 
