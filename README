@@ -1,0 +1,67 @@
+ITASoftware Hiring Puzzle: Strawberry Fields
+Strawberry Fields
+Strawberries are growing in a rectangular field of length and width at most 50. You
+want to build greenhouses to enclose the strawberries. Greenhouses are rectangular,
+axis-aligned with the field (i.e., not diagonal), and may not overlap. The cost of each
+greenhouse is $10 plus $1 per unit of area covered.
+Write a program that chooses the best number of greenhouses to build, and their
+locations, so as to enclose all the strawberries as cheaply as possible. Heuristic
+solutions that may not always produce the lowest possible cost will be accepted: seek a
+reasonable tradeoff of efficiency and optimality.
+Your program must read a small integer 1 = N = 10 representing the maximum number
+of greenhouses to consider, and a matrix representation of the field, in which the '@'
+symbol represents a strawberry. Output must be a copy of the original matrix with
+letters used to represent greenhouses, preceded by the covering's cost. Here is an
+example input-output pair:
+Input Output
+4 ..@@@@@..............
+. ..@@@@@@........@@@..
+. .....@@@@@......@@@..
+. .......@@@@@@@@@@@@..
+. .........@@@@@.......
+. .........@@@@@.......
+.
+9 0
+..AAAAAAAA...........
+. ..AAAAAAAA....CCCCC..
+. ..AAAAAAAA....CCCCC..
+. .......BBBBBBBCCCCC..
+. .......BBBBBBB.......
+. .......BBBBBBB.......
+.
+In this example, the solution cost of $90 is computed as (10+8*3) + (10+7*3) + (10+5*3).
+
+Run your program on the 9 sample inputs found in this file and report the total cost of the 9 solutions found by your program, as well as each individual solution.
+URL: http://www.itasoftware.com/careers/work-at-ita/hiring-puzzles.html
+
+Description
+-----------
+
+To solve the strawberry fields problem I chose to implement a solution based on constraint propagation and heuristic backtracking search in the (constraint-logic) programming language ECLiPSe. My solution is based on a representation of the greenhouses as a pair of coordinates (top-left, bottom-right) ranging over the entire (1..W,1..H) field. By constraining these coordinates to be valid solutions a search space is obtained in which it is possible to find reasonable solutions in a reasonable amount of time. The search algorithm used amounts to credit search, always expanding the most-constrained variable with the smallest domain size first, followed by a bounded backtracking search over 8 levels. Intuitively i'm using credit search to spread out over the search space (leaning slightly to the left), and finish up using a bounded backtracking search to not miss any slightly better solutions close by. The exact values were chosen empirically (using the speed predicate).
+
+Results
+-------
+
+	Problem Cost / Running Time
+	100		50  / 2.62s
+	101		62  / 5.60 s
+	102		99  / 8.03s
+	103		262 / 50s
+	104		309 / 37.41s
+	105		318 / 25.60s
+	106		426 / 33.27s
+	107		297 / 118s
+	108		297 / 118s
+Total Cost: 2120
+
+Note: the ordering of the problems corresponds to the ordering in the problems file but I had to number them starting from 100 instead of 0 to avoid conflicts.
+
+Instructions
+------------
+To run the program the ECLiPSe runtime is needed. It can be obtained (for free) from here. After installation, start the doseclipse tool (or equivalent command line executable) in the directory containing the rects.ecl and problems.ecl file and issue the command (note the '.' at the end):
+	
+	compile(['problems.ecl', 'rects.ecl']).
+
+(It should answer: Yes) after which the program can be used. The solve predicate takes a number of arguments: Nr - which is the number of a problem (from problems.ecl, first argument of the problem predicate), Rects and Total which are the resulting list of rectangles (greenhouses) and the total cost of the solution found. The solve predicates then requires 3 arguments determining the search method to use: Selection, Choice, Method (see here for possible values for these parameters) and these should be set to: most_constrained, indomain_interval, credit(1024, bbs(8)). And lastly there are 2 parameters that made development easier, namely: Optimal and Timeout which indicate the optimal value for the current problem and give the maximum amount of time the search is allowed to run, respectively. Putting it all together, running the following query will search the example problem from the problem description on page 1:
+
+	solve(11, X, C, most_constrained, indomain_interval, credit(1024,bbs(8)), 1, 10000).
